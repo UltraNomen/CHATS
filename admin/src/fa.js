@@ -1,0 +1,32 @@
+// Farsi strings the console adds on top of the design's dictionary (live data and new copy).
+import GSFA from '#shared/core/i18n.js';
+
+GSFA.add({
+  'no data for yesterday': 'داده‌ای برای دیروز نیست', 'since last restart': 'از آخرین راه‌اندازی', 'open reports': 'گزارش باز', 'OPEN': 'باز', 'pending': 'در انتظار',
+  'messages / hour · 24h': 'پیام / ساعت · ۲۴ساعت', 'signups / day · 14d': 'ثبت‌نام / روز · ۱۴ روز', 'sync requests / hour · 24h': 'درخواست همگام‌سازی / ساعت · ۲۴ساعت',
+  'errors / 24h': 'خطا / ۲۴ساعت', 'running CHATS server': 'سرور CHATS در حال اجرا', '· releases from': '· نسخه‌ها از', '· database snapshot · daily after 03:00 UTC': '· تصویر پایگاه داده · روزانه پس از ۰۳:۰۰ UTC',
+  "// attachments are already encrypted in blob storage and aren't part of the snapshot · back that up separately": '// پیوست‌ها از قبل در فضای ذخیره رمزنگاری شده‌اند و جزو تصویر نیستند · جداگانه پشتیبان بگیرید',
+  'blobs no longer referenced by any chat': 'فایل‌هایی که دیگر در هیچ گفتگویی استفاده نمی‌شوند', 'storage per user': 'فضای هر کاربر', 'CONFIGURED': 'پیکربندی‌شده', 'NOT NEEDED': 'لازم نیست', 'NOT SET': 'تنظیم نشده',
+  "// installed PWAs get push through each browser's own push service · no apple or google keys needed": '// PWAهای نصب‌شده اعلان را از سرویس خود مرورگر می‌گیرند · کلید اپل یا گوگل لازم نیست',
+  'min 6 chars · stretched with argon2id on the device': 'حداقل ۶ نویسه · با argon2id روی دستگاه تقویت می‌شود', 'stored only · not verified until smtp is set up': 'فقط ذخیره می‌شود · تا راه‌اندازی SMTP تأیید نمی‌شود',
+  'hide a message pending review after this many reports': 'پس از این تعداد گزارش، پیام تا بررسی پنهان شود', 'how long after sending a message stays editable': 'پیام تا چه مدت پس از ارسال قابل ویرایش است',
+  '1 hour': '۱ ساعت', 'forward to other chats · keeps "forwarded from"': 'هدایت به گفتگوهای دیگر · «هدایت‌شده از» حفظ می‌شود',
+  'one file, zero setup. good for up to a few hundred active users.': 'یک فایل، بدون راه‌اندازی. مناسب تا چند صد کاربر فعال.', 'created if missing · keep on local disk, not nfs': 'در صورت نبود ساخته می‌شود · روی دیسک محلی، نه nfs',
+  '// greyed out: php is missing': '// غیرفعال: php این افزونه‌ها را ندارد', '· json is not part of this build': '· json جزو این نسخه نیست', '2fa codes, admin alerts and test messages': 'کدهای ۲مرحله‌ای، هشدارهای مدیر و پیام‌های آزمایشی',
+  'needs smtp — set up email first': 'نیاز به SMTP — اول ایمیل را راه‌اندازی کنید', 'ENABLED': 'فعال', 'backup codes left': 'کد پشتیبان باقی‌مانده', 'last login': 'آخرین ورود', 'THIS': 'همین', 'INFO': 'اطلاع', 'OFF': 'خاموش',
+  'manual · 0s': 'دستی · ۰ث',
+  'restricted console · connect to a server': 'کنسول محدود · اتصال به سرور', 'SERVER ADDRESS': 'نشانی سرور', 'CONNECT →': 'اتصال ←', 'change': 'تغییر',
+  'server': 'سرور', 'address': 'نشانی', 'version': 'نسخه', 'status': 'وضعیت', 'key': 'کلید', 'ready': 'آماده',
+  'not set up yet · continue to the setup wizard': 'هنوز راه‌اندازی نشده · ادامه به راه‌انداز', 'TRUST NEW KEY & CONTINUE': 'اعتماد به کلید جدید و ادامه',
+  "✕ this server's key changed since you last connected. if the server wasn't reinstalled, someone may be impersonating it — don't sign in.": '✕ کلید این سرور از آخرین اتصال تغییر کرده. اگر سرور دوباره نصب نشده، ممکن است کسی خود را جای آن جا زده باشد — وارد نشوید.',
+  "// compare the key with the one your server shows under health, or in the chat app's server info": '// کلید را با کلیدی که سرور در بخش سلامت یا اطلاعات سرور برنامه نشان می‌دهد مقایسه کنید',
+  '// only continue if you are setting up this server': '// فقط اگر این سرور را راه‌اندازی می‌کنید ادامه دهید', '░░░ connecting…': '░░░ در حال اتصال…',
+  '✕ enter the address of your CHATS server': '✕ نشانی سرور CHATS را وارد کنید', 'SERVER KEY': 'کلید سرور',
+  "// the console and the chat app show this when they connect · if it ever differs there, don't sign in": '// کنسول و برنامه هنگام اتصال این را نشان می‌دهند · اگر روزی متفاوت بود وارد نشوید', 'objects': 'شیء', 'attachments volume ·': 'حجم پیوست‌ها ·', 'live ·': 'فعال ·', 'total · registration': 'کل · ثبت‌نام',
+}, [
+  [/^CONTINUE TO (.+) →$/, 'ادامه به $1 ←'],
+  [/^live · refreshed (\d\d:\d\d)$/, 'زنده · به‌روزشده $1'], [/^\+(\d+) this week$/, '+$1 این هفته'], [/^(\d+) warn · (\d+) err$/, '$1 هشدار · $2 خطا'], [/^(\d+) live invite codes$/, '$1 کد دعوت فعال'],
+  [/^disk (.+)$/, 'دیسک $1'], [/^peak (\d+)$/, 'اوج $1'], [/^now (\d+)$/, 'اکنون $1'], [/^(\d+) chats · ids only$/, '$1 گفتگو · فقط شناسه'], [/^(\d+) delivered$/, '$1 تحویل‌شده'],
+  [/^writable by the web server user · (.+) free on this volume$/, 'قابل نوشتن برای کاربر وب‌سرور · $1 آزاد روی این دیسک'], [/^· running (.+)$/, '· در حال اجرا $1'], [/^last run (.+)$/, 'آخرین اجرا $1'],
+  [/^(\d+) \/ (\d+) admins$/, '$1 / $2 مدیر'], [/^(\d+) of (\d+) users have 2FA · policy: (\w+)$/, '$1 از $2 کاربر ۲مرحله‌ای دارند · سیاست: $3'], [/^your address: (.+)$/, 'نشانی شما: $1'],
+]);

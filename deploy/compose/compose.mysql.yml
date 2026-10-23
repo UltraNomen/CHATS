@@ -1,0 +1,29 @@
+# CHATS + MySQL 8.4. The setup wizard is pre-filled with this database; the password never leaves the server.
+#   docker compose -f compose.mysql.yml up -d
+name: chats
+services:
+  chats:
+    image: "ghcr.io/ultranomen/chats:${CHATS_VERSION:-latest}"
+    build: { context: ../.., dockerfile: deploy/docker/Dockerfile }
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      CHATS_DOMAIN: "${CHATS_DOMAIN:-:80}"
+      CHATS_SETUP_TOKEN: "${CHATS_SETUP_TOKEN:?set CHATS_SETUP_TOKEN in .env}"
+      CHATS_DB_ENGINE: mysql
+      CHATS_DB_HOST: mysql
+      CHATS_DB_PORT: "3306"
+      CHATS_DB_NAME: chats
+      CHATS_DB_USER: chats
+      CHATS_DB_PASS: "${CHATS_DB_PASS:?set CHATS_DB_PASS in .env}"
+    volumes: [chats-data:/data]
+    depends_on: { mysql: { condition: service_healthy } }
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment: { MYSQL_DATABASE: chats, MYSQL_USER: chats, MYSQL_PASSWORD: "${CHATS_DB_PASS}", MYSQL_RANDOM_ROOT_PASSWORD: "yes" }
+    volumes: [mysql-data:/var/lib/mysql]
+    healthcheck: { test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uchats -p$$MYSQL_PASSWORD --silent"], interval: 5s, timeout: 5s, retries: 30 }
+volumes:
+  chats-data:
+  mysql-data:

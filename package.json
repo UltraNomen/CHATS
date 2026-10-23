@@ -1,0 +1,36 @@
+{
+  "name": "chats",
+  "private": true,
+  "version": "2.6.0",
+  "description": "End-to-end encrypted chat you host yourself: PWA client, admin console and PHP API",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "imports": {
+    "#shared/*": "./shared/*"
+  },
+  "scripts": {
+    "dev": "vite --mode client",
+    "dev:admin": "vite --mode admin",
+    "build": "node scripts/build.mjs",
+    "release": "node scripts/build.mjs && node scripts/release.mjs",
+    "version:set": "node scripts/version.mjs",
+    "test:client": "node tests/client-security.mjs",
+    "test:api": "node tests/e2e.mjs",
+    "test:security": "node tests/security.mjs"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.9.7",
+    "@scure/bip39": "^1.6.0",
+    "hash-wasm": "^4.12.0",
+    "preact": "^10.29.8",
+    "qrcode-generator": "^1.5.2"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "vite": "^6.4.5",
+    "vite-plugin-singlefile": "^2.3.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

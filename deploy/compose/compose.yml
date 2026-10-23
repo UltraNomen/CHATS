@@ -1,0 +1,16 @@
+# CHATS with SQLite: the smallest setup. Everything lives in the chats-data volume.
+#   cp .env.example .env   (set CHATS_SETUP_TOKEN, and CHATS_DOMAIN for HTTPS)
+#   docker compose up -d   then open https://<your domain>/admin/?setup=<token>
+name: chats
+services:
+  chats:
+    image: "ghcr.io/ultranomen/chats:${CHATS_VERSION:-latest}"
+    build: { context: ../.., dockerfile: deploy/docker/Dockerfile }
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      CHATS_DOMAIN: "${CHATS_DOMAIN:-:80}"
+      CHATS_SETUP_TOKEN: "${CHATS_SETUP_TOKEN:?set CHATS_SETUP_TOKEN in .env}"
+    volumes: [chats-data:/data]
+volumes:
+  chats-data:

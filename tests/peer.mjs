@@ -1,0 +1,20 @@
+// Acts as a second user against a running server: reads the newest group message and replies.
+import { Api, apiBase } from '../shared/core/api.js';
+import * as C from '../shared/core/crypto.js';
+import { b64, unb64 } from '../shared/core/bytes.js';
+const [, , url, user, pw, text] = process.argv;
+const api = new Api(apiBase(url));
+const pre = await api.post('auth/prelogin', { id: user });
+const d = await C.derivePassword(pw, pre.salt);
+const r = await api.post('auth/login', { id: user, auth: b64(d.auth) });
+api.token = r.token;
+const mk = await C.unwrapMk(d.encKey, r.keys.pwWrap);
+const sk = unb64((await C.decJson(mk, r.keys.vault, 'vault')).sk);
+const s = await api.post('sync', { since: 0 });
+const g = s.chats.find(c => c.type === 'group');
+const key = await C.unseal(sk, g.box);
+const last = g.last;
+console.log('last message:', (await C.decJson(key, last.ct, g.id)).text);
+await api.post('chat/update', { chat: g.id, read: last.id });
+await api.post('msg/send', { chat: g.id, cid: 'peer' + Date.now(), ct: await C.encJson(key, { t: 'text', text, r: { id: last.id, from: last.from, x: 'on it @kiejo…' } }, g.id) });
+console.log('replied');

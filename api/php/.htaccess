@@ -1,0 +1,12 @@
+<IfModule mod_php.c>
+  php_value upload_max_filesize 64M
+  php_value post_max_size 70M
+  php_value memory_limit 256M
+</IfModule>
+<FilesMatch "\.(json|md|ini|lock)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+RewriteEngine On
+RewriteRule ^(lib|routes)/ - [F,L]

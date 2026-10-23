@@ -1,0 +1,29 @@
+# CHATS + PostgreSQL 16. The setup wizard is pre-filled with this database; the password never leaves the server.
+#   docker compose -f compose.postgres.yml up -d
+name: chats
+services:
+  chats:
+    image: "ghcr.io/ultranomen/chats:${CHATS_VERSION:-latest}"
+    build: { context: ../.., dockerfile: deploy/docker/Dockerfile }
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      CHATS_DOMAIN: "${CHATS_DOMAIN:-:80}"
+      CHATS_SETUP_TOKEN: "${CHATS_SETUP_TOKEN:?set CHATS_SETUP_TOKEN in .env}"
+      CHATS_DB_ENGINE: postgres
+      CHATS_DB_HOST: postgres
+      CHATS_DB_PORT: "5432"
+      CHATS_DB_NAME: chats
+      CHATS_DB_USER: chats
+      CHATS_DB_PASS: "${CHATS_DB_PASS:?set CHATS_DB_PASS in .env}"
+    volumes: [chats-data:/data]
+    depends_on: { postgres: { condition: service_healthy } }
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment: { POSTGRES_DB: chats, POSTGRES_USER: chats, POSTGRES_PASSWORD: "${CHATS_DB_PASS}" }
+    volumes: [pg-data:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U chats -d chats"], interval: 5s, timeout: 5s, retries: 20 }
+volumes:
+  chats-data:
+  pg-data:

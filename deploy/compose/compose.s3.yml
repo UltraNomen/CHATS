@@ -1,0 +1,29 @@
+# Overlay: encrypted files go to S3-compatible object storage (SeaweedFS) instead of the chats-data volume.
+# Combine with any of the other files, e.g.:
+#   docker compose -f compose.postgres.yml -f compose.s3.yml up -d
+services:
+  chats:
+    environment:
+      CHATS_S3_ENDPOINT: http://seaweedfs:8333
+      CHATS_S3_REGION: us-east-1
+      CHATS_S3_BUCKET: chats
+      CHATS_S3_KEY: "${CHATS_S3_KEY:-chats}"
+      CHATS_S3_SECRET: "${CHATS_S3_SECRET:?set CHATS_S3_SECRET in .env}"
+      CHATS_S3_PATH_STYLE: "true"
+    depends_on: { s3-bucket: { condition: service_completed_successfully } }
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    restart: unless-stopped
+    command: server -dir=/data -s3 -s3.config=/etc/seaweedfs/s3.json
+    configs: [{ source: s3-identities, target: /etc/seaweedfs/s3.json }]
+    volumes: [s3-data:/data]
+  s3-bucket:
+    image: chrislusf/seaweedfs:latest
+    depends_on: [seaweedfs]
+    entrypoint: ["/bin/sh", "-c", "until echo 's3.bucket.list' | weed shell -master=seaweedfs:9333 >/dev/null 2>&1; do sleep 2; done; echo 's3.bucket.create -name chats' | weed shell -master=seaweedfs:9333 || true"]
+configs:
+  s3-identities:
+    content: |
+      {"identities":[{"name":"chats","credentials":[{"accessKey":"${CHATS_S3_KEY:-chats}","secretKey":"${CHATS_S3_SECRET}"}],"actions":["Admin","Read","Write","List","Tagging"]}]}
+volumes:
+  s3-data:

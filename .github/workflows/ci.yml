@@ -1,0 +1,90 @@
+# Every push and pull request: build both apps, lint and unit-test the PHP API, then run the API conformance and
+# security suites against SQLite, MySQL and PostgreSQL.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: node scripts/version.mjs --check
+      - run: npm run build
+      - run: npm run test:client
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: dist, include-hidden-files: true, retention-days: 3 }
+
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '${{ matrix.php }}', extensions: 'pdo_sqlite, pdo_mysql, pdo_pgsql, curl, openssl', coverage: none }
+      - name: lint
+        run: find api/php -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: unit tests
+        run: php api/php/test/security.php
+
+  api:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        db: [sqlite, mysql, postgres]
+    services:
+      mysql:
+        image: mysql:8.4
+        env: { MYSQL_ROOT_PASSWORD: root }
+        ports: ['3306:3306']
+        options: --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot" --health-interval=5s --health-retries=30
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_PASSWORD: root }
+        ports: ['5432:5432']
+        options: --health-cmd="pg_isready -U postgres" --health-interval=5s --health-retries=30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3', extensions: 'pdo_sqlite, pdo_mysql, pdo_pgsql, curl, openssl', coverage: none }
+      - name: databases
+        run: |
+          for d in sec e2e; do
+            mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE $d"
+            PGPASSWORD=root psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE $d"
+          done
+      - name: servers
+        run: |
+          for p in 8791 8792; do
+            mkdir -p "$RUNNER_TEMP/data$p"
+            CHATS_DATA="$RUNNER_TEMP/data$p" nohup php -d upload_max_filesize=64M -d post_max_size=70M -S 127.0.0.1:$p -t dist/full > "$RUNNER_TEMP/php$p.log" 2>&1 &
+          done
+          sleep 2
+      - name: security suite
+        run: node tests/security.mjs http://127.0.0.1:8791
+        env:
+          E2E_DB: ${{ matrix.db == 'mysql' && '{"engine":"mysql","host":"127.0.0.1","port":"3306","name":"sec","user":"root","pass":"root"}' || matrix.db == 'postgres' && '{"engine":"postgres","host":"127.0.0.1","port":"5432","name":"sec","user":"postgres","pass":"root"}' || '{"engine":"sqlite"}' }}
+      - name: conformance suite
+        run: node tests/e2e.mjs http://127.0.0.1:8792
+        env:
+          E2E_DB: ${{ matrix.db == 'mysql' && '{"engine":"mysql","host":"127.0.0.1","port":"3306","name":"e2e","user":"root","pass":"root"}' || matrix.db == 'postgres' && '{"engine":"postgres","host":"127.0.0.1","port":"5432","name":"e2e","user":"postgres","pass":"root"}' || '{"engine":"sqlite"}' }}
+      - name: server logs
+        if: failure()
+        run: cat "$RUNNER_TEMP"/php*.log

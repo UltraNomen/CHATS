@@ -1,0 +1,25 @@
+# CHATS_DOMAIN=chat.example.org gets a certificate automatically; the default ":80" serves plain HTTP
+# (put it behind your own proxy, or use it on localhost).
+{
+	admin off
+}
+
+{$CHATS_DOMAIN} {
+	root * /srv/chats
+	encode zstd gzip
+
+	@private path /api/lib/* /api/routes/* /api/test/* /data/*
+	respond @private 404
+
+	@invite path_regexp ^/i/[A-Za-z0-9-]+/?$
+	rewrite @invite /index.html
+	rewrite /share-target /index.html
+
+	header /sw.js Cache-Control "no-cache"
+	header /index.html Cache-Control "no-cache"
+	header /admin/index.html Cache-Control "no-cache"
+	header /manifest.webmanifest Content-Type "application/manifest+json"
+
+	php_fastcgi /api/* 127.0.0.1:9000
+	file_server
+}
