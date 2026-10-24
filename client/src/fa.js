@@ -13,6 +13,8 @@ GSFA.add({
   "notifications aren't available right now: this browser can't reach its push service, which happens when only the domestic internet works · new messages still arrive while CHATS is open": 'اعلان‌ها فعلاً در دسترس نیستند: این مرورگر به سرویس اعلان خود دسترسی ندارد، که وقتی فقط اینترنت داخلی وصل است پیش می‌آید · پیام‌های تازه تا وقتی CHATS باز است می‌رسند',
   "couldn't reach the server · CHATS tries again the next time it starts": 'به سرور دسترسی نیست · CHATS دفعه‌ی بعد که باز شود دوباره امتحان می‌کند',
   "the server couldn't set up notifications for this browser · new messages still arrive while CHATS is open": 'سرور نتوانست اعلان را برای این مرورگر راه بیندازد · پیام‌های تازه تا وقتی CHATS باز است می‌رسند',
+  'checks your server in the background · no Google needed': 'سرور شما را در پس‌زمینه بررسی می‌کند · بدون نیاز به گوگل',
+  'shown while CHATS runs in the menu bar or tray': 'تا وقتی CHATS در نوار منو یا سینی سیستم اجراست نمایش داده می‌شود',
   '// others find you as': '// دیگران شما را این‌طور پیدا می‌کنند:', '// visible to:': '// قابل مشاهده برای:',
 }, [
   // system lines in a conversation (they contain names, so they're matched as patterns)

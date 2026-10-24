@@ -48,3 +48,11 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.licenses=AGPL-3.0-only
             org.opencontainers.image.version=${{ github.ref_name }}
+
+  # Mac, Windows and Android apps, attached to the same release once it exists.
+  native:
+    needs: release
+    uses: ./.github/workflows/native.yml
+    with:
+      tag: ${{ github.ref_name }}
+    secrets: inherit

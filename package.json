@@ -16,7 +16,10 @@
     "version:set": "node scripts/version.mjs",
     "test:client": "node tests/client-security.mjs",
     "test:api": "node tests/e2e.mjs",
-    "test:security": "node tests/security.mjs"
+    "test:security": "node tests/security.mjs",
+    "native:build": "npm run build && cd native && tauri build",
+    "native:dev": "cd native && tauri dev",
+    "native:android": "npm run build && cd native && tauri android build --apk"
   },
   "dependencies": {
     "@noble/curves": "^1.9.7",
@@ -27,6 +30,7 @@
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
+    "@tauri-apps/cli": "^2.12.4",
     "vite": "^6.4.5",
     "vite-plugin-singlefile": "^2.3.4"
   },

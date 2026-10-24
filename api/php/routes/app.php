@@ -690,6 +690,21 @@ function r_push_peek(): never
     out(['message' => fmt_msg($m), 'box' => $mine['key_box'], 'unread' => (int)$db->value("SELECT COUNT(*) FROM messages msg JOIN members mm ON mm.chat_id = msg.chat_id AND mm.user_id = ? AND mm.status = 'active' WHERE msg.id > mm.read_seq AND msg.sender_id <> ? AND msg.kind = 'msg' AND msg.deleted = 0", [$me['id'], $me['id']])]);
 }
 
+/**
+ * Background check for the Android app when push services are out of reach: how many new messages arrived after
+ * message id `since`, without any content and without marking the user online. since = 0 only reports the latest id.
+ */
+function r_notify_poll(): never
+{
+    $db = DB::main();
+    $me = Auth::app($db, false, false);
+    $since = max(0, int_arg('since'));
+    $from = "FROM messages m JOIN members mm ON mm.chat_id = m.chat_id AND mm.user_id = ? AND mm.status = 'active' AND mm.muted = 0 WHERE m.kind = 'msg' AND m.deleted = 0";
+    $latest = (int)$db->value("SELECT COALESCE(MAX(m.id), 0) $from", [$me['id']]);
+    $count = $since > 0 ? (int)$db->value("SELECT COUNT(*) $from AND m.id > ? AND m.sender_id <> ?", [$me['id'], $since, $me['id']]) : 0;
+    out(['latest' => $latest, 'count' => $count]);
+}
+
 // ---------------------------------------------------------------- user two-factor
 
 function r_mfa_setup(): never

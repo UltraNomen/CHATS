@@ -10,7 +10,8 @@ import { AuthView } from './Auth.jsx';
 import { LeftPane, Drawer } from './Left.jsx';
 import { RightPane } from './Right.jsx';
 import { Overlays } from './Overlays.jsx';
-import { isOn, chatList } from './view.js';
+import { isOn, chatList, decorate } from './view.js';
+import { NATIVE, DESKTOP, ANDROID, nativeNotify, watchStart, watchForeground } from './native.js';
 import { RASTER } from '#shared/core/messages.js';
 import { LOCKED_SERVER } from '#shared/core/build.js';
 import { loadVazir } from '#shared/ui/fonts.js';
@@ -23,7 +24,7 @@ export const REPO = 'https://github.com/UltraNomen/CHATS';
 const LOCK0 = { enabled: false, digits: 4, after: 300, hash: '', salt: '' };
 
 /** The CHATS server this page was loaded from, e.g. "example.org/chat" for an install in a subfolder. */
-const ownServer = () => /^https?:$/.test(location.protocol) ? location.host + location.pathname.replace(/\/i\/[^/]+\/?$/, '/').replace(/[^/]*$/, '').replace(/\/$/, '') : '';
+const ownServer = () => !NATIVE && /^https?:$/.test(location.protocol) ? location.host + location.pathname.replace(/\/i\/[^/]+\/?$/, '/').replace(/[^/]*$/, '').replace(/\/$/, '') : '';
 
 export class App extends Component {
   constructor() {
@@ -89,6 +90,7 @@ export class App extends Component {
     this.onVis = () => {
       this.eng.setVisible(!document.hidden);
       const s = this.state;
+      if (ANDROID) this.androidWatch(document.hidden);
       if (document.hidden) { this.hiddenAt = Date.now(); return; }
       if (s.lock.enabled && !s.auth && !s.pinMode && (s.lock.after === 0 || Date.now() - (this.hiddenAt || 0) > s.lock.after * 1000)) this.setState({ pinMode: 'lock', pin: '' });
       if (this.state.right === 'chat' && this.state.activeId) this.eng.markRead(this.state.activeId);
@@ -182,7 +184,7 @@ export class App extends Component {
   }
 
   registerSW() {
-    if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+    if (NATIVE || !('serviceWorker' in navigator) || location.protocol === 'file:') return;
     navigator.serviceWorker.register('sw.js').then(reg => {
       reg.addEventListener('updatefound', () => {
         const w = reg.installing;
@@ -321,6 +323,22 @@ export class App extends Component {
     if (s.right === 'chat' && s.activeId === c.id && !document.hidden) return;
     if (c.muted) return;
     if (s.prefs.sound) beep();
+    // Desktop app in the tray or behind other windows: a native notification with the decrypted preview.
+    if (DESKTOP && s.prefs.notify && (document.hidden || !document.hasFocus())) {
+      const d = decorate(this, c);
+      nativeNotify(d.title, d.preview);
+    }
+  }
+
+  /** Android: hand over to the background check while hidden, take back over when visible again. */
+  androidWatch(hidden) {
+    const e = this.eng, srv = e.s.server;
+    if (!e.s.me || !srv || !e.api || !e.api.token || !this.state.prefs.notify) return;
+    if (!hidden) return watchForeground(true);
+    const fa = this.state.lang === 'fa';
+    watchStart(srv.base, e.api.token, fa
+      ? { title: 'CHATS', one: '۱ پیام تازه', many: '{n} پیام تازه', status: 'در حال بررسی پیام‌های تازه' }
+      : { title: 'CHATS', one: '1 new message', many: '{n} new messages', status: 'checking for new messages' });
   }
 
   // ---- composer

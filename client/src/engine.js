@@ -4,6 +4,7 @@ import * as C from '#shared/core/crypto.js';
 import { b64, unb64 } from '#shared/core/bytes.js';
 import { idbGet, idbSet, idbDel } from '#shared/core/idb.js';
 import { normalizeBody, normalizeCache, chatMeta, safeMime, sniffRaster, RASTER } from '#shared/core/messages.js';
+import { NATIVE, ANDROID, nativePermission, watchStop } from './native.js';
 
 export { VERSION as CUR_VER } from '#shared/core/build.js';
 
@@ -810,6 +811,8 @@ export class Engine {
   }
 
   async trySubscribePush() {
+    // The desktop and Android apps notify natively (tray app / background check) instead of web push.
+    if (NATIVE) return (await nativePermission()) ? '' : 'blocked';
     const vapid = this.s.server && this.s.server.info.vapid;
     if (!vapid || !('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return 'unsupported';
     const reg = await Promise.race([navigator.serviceWorker.ready, new Promise(r => setTimeout(() => r(null), 8000))]);
@@ -826,7 +829,8 @@ export class Engine {
   }
 
   async unsubscribePush() {
-    if (!('serviceWorker' in navigator)) return;
+    if (ANDROID) await watchStop();
+    if (NATIVE || !('serviceWorker' in navigator)) return;
     const reg = await navigator.serviceWorker.getRegistration();
     const sub = reg && await reg.pushManager.getSubscription();
     if (sub) await sub.unsubscribe();

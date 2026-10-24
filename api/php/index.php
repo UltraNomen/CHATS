@@ -36,7 +36,7 @@ const ROUTES = [
     'POST profile' => 'r_profile', 'POST vault' => 'r_vault', 'POST phrase' => 'r_phrase',
     'GET users/search' => 'r_users_search', 'POST users/lookup' => 'r_users_lookup',
     'GET devices' => 'r_devices', 'POST devices/revoke' => 'r_devices_revoke',
-    'POST push/subscribe' => 'r_push_subscribe', 'POST push/unsubscribe' => 'r_push_unsubscribe', 'GET push/peek' => 'r_push_peek',
+    'POST push/subscribe' => 'r_push_subscribe', 'POST push/unsubscribe' => 'r_push_unsubscribe', 'GET push/peek' => 'r_push_peek', 'GET notify/poll' => 'r_notify_poll',
     'POST mfa/setup' => 'r_mfa_setup', 'POST mfa/enable' => 'r_mfa_enable', 'POST mfa/disable' => 'r_mfa_disable', 'POST mfa/backup' => 'r_mfa_backup',
     'POST ann/ack' => 'r_ann_ack',
     'GET admin/me' => 'r_admin_me', 'POST admin/mfa' => 'r_admin_mfa', 'GET admin/overview' => 'r_admin_overview',

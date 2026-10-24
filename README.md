@@ -7,7 +7,7 @@
 
 **English** · [فارسی](README.fa.md)
 
-**CHATS is a minimal, open-source PHP chat app with end-to-end encryption that you host yourself.** It's a private group chat for a team, a family or a community, as an alternative to Telegram, WhatsApp or Slack groups on someone else's servers. It runs on cheap **shared PHP hosting (cPanel)** or with one **Docker** command. People use it as an installable **web app (PWA)** on Android, iPhone and desktop, and you manage the server from a built-in **admin console**. The interface is available in **English and Farsi (Persian), with full right-to-left support**.
+**CHATS is a minimal, open-source PHP chat app with end-to-end encryption that you host yourself.** It's a private group chat for a team, a family or a community, as an alternative to Telegram, WhatsApp or Slack groups on someone else's servers. It runs on cheap **shared PHP hosting (cPanel)** or with one **Docker** command. People use it as an installable **web app (PWA)** on Android, iPhone and desktop, or as a **native app for Mac, Windows and Android**, and you manage the server from a built-in **admin console**. The interface is available in **English and Farsi (Persian), with full right-to-left support**.
 
 The server only stores ciphertext. Messages, files, group names, contacts and passwords are encrypted on the device before they leave it.
 
@@ -30,6 +30,7 @@ It's small on purpose: a lightweight PHP backend with no framework and no Compos
 - Typing indicators, read receipts, online status and "last seen", each with privacy settings.
 - Push notifications whose previews are encrypted too, plus offline mode and a share target.
 - Installs like a native app from the browser, with no app store needed.
+- [Native apps](native/README.md) for **Mac, Windows and Android** with notifications that don't depend on Google or Apple push servers.
 - English and Farsi interface with right-to-left layout and the Vazirmatn font.
 
 ### Easy to host
@@ -67,6 +68,8 @@ Every [release](https://github.com/UltraNomen/CHATS/releases) has these assets:
 | `chats-admin-vX.html` | the console as **one HTML file** | managing a server from anywhere |
 | `chats-api-php-vX.zip` | the API alone, in an `api/` folder | API on its own host; the apps are hosted elsewhere |
 | `ghcr.io/ultranomen/chats:X` | Docker image: Caddy (automatic HTTPS) + PHP + the full bundle | servers and VPSes |
+| `chats-desktop-vX-mac.dmg`, `-windows-setup.exe`, `-windows.msi` | the [desktop app](native/README.md) for Mac and Windows | people who want CHATS in the menu bar or tray, with native notifications |
+| `chats-android-vX.apk` | the [Android app](native/README.md) | Android phones, including notifications without Google |
 
 `SHA256SUMS` lists checksums for every file.
 
@@ -102,7 +105,7 @@ Yes. Keys are created and kept on your devices. The server stores only encrypted
 Yes. CHATS needs only PHP 8.1+ and a database driver; SQLite works out of the box. Upload one zip to normal shared hosting. It's tested on a LiteSpeed cPanel host, in a subfolder.
 
 **Is there a mobile app?**
-CHATS is a Progressive Web App: open your server in Safari or Chrome and choose "Add to Home Screen". It then runs full-screen with its own icon, push notifications and offline start-up, with no app store involved.
+Yes, two kinds. On any phone, CHATS works as a Progressive Web App: open your server in Safari or Chrome and choose "Add to Home Screen". It then runs full-screen with its own icon, push notifications and offline start-up, with no app store involved. For Android there's also an [APK](native/README.md) whose notifications come from your own server instead of Google, and there are desktop apps for Mac and Windows.
 
 **Which databases does it support?**
 SQLite, MySQL/MariaDB and PostgreSQL. You can move a running server from one to another in the admin console.
@@ -131,6 +134,7 @@ CHATS fits if you searched for any of these:
 
 ```
 client/        chat PWA (Preact): builds into one index.html + sw.js + manifest + icons
+native/        Mac, Windows and Android apps (Tauri) around the chat app
 admin/         admin console (Preact): builds into one self-contained HTML file
 shared/        code both apps use: crypto, API client, i18n, design system, fonts
 api/php/       the API (PHP 8.1+, no dependencies)
@@ -165,6 +169,7 @@ Tests are described in [docs/testing.md](docs/testing.md), and releases in [CONT
 - [Architecture](docs/architecture.md): diagrams of the parts, the encryption keys, sign-in, message sync, the data model and deployment layouts
 - [Deployment](docs/deploy.md): shared hosting and cPanel, nginx, Docker and compose, split deployments, branded clients, domestic-only internet, updating
 - [Operations](docs/operations.md): backups, switching database or storage, push, two-factor, versions
+- [Native apps](native/README.md): Mac, Windows and Android downloads, notifications, building and signing
 - [Testing](docs/testing.md)
 - [Security](SECURITY.md): reporting vulnerabilities, the encryption model, hardening
 - [Changelog](CHANGELOG.md)

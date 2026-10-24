@@ -5,6 +5,7 @@ import { fmtSize, bar } from '#shared/core/format.js';
 import { chatList, person, status, isOn } from './view.js';
 import { FONTS, AFTER, REPO, afterLabel } from './App.jsx';
 import { CUR_VER } from './engine.js';
+import { NATIVE, ANDROID } from './native.js';
 
 const SKEL = [['▓▓▓▓▓▓▓▓░░░░', '░░░░░░░░░░░░░░░░░░░░░░', 1], ['▓▓▓▓▓▓░░░░░░', '░░░░░░░░░░░░░░░', 0.8], ['▓▓▓▓▓▓▓▓▓▓░░', '░░░░░░░░░░░░░░░░░░', 0.6], ['▓▓▓▓▓░░░░░░░', '░░░░░░░░░░░░', 0.4], ['▓▓▓▓▓▓▓░░░░░', '░░░░░░░░░░░░░░░░', 0.25]];
 
@@ -237,7 +238,7 @@ function Settings({ a }) {
           {items.map(([k, glyph, hint]) => <NavRow key={k} label={k === 'privacy' ? 'privacy & security' : k} glyph={glyph} hint={hint} h={56} onClick={() => a.set({ setSec: k })} />)}
         </>}
         {sec === 'notifications' && <>
-          <ToggleRow label="notifications" hint="push for new messages">
+          <ToggleRow label="notifications" hint={!NATIVE ? 'push for new messages' : ANDROID ? 'checks your server in the background · no Google needed' : 'shown while CHATS runs in the menu bar or tray'}>
             <Switch checked={s.prefs.notify} onChange={async v => {
               if (v) {
                 const why = await e.subscribePush().catch(() => 'unreachable');

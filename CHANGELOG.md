@@ -2,6 +2,16 @@
 
 One version covers the API, the chat app and the console. Releases are tagged `vX.Y.Z`.
 
+## [Unreleased]
+
+**Native apps**
+- CHATS for **Mac, Windows and Android**, built with Tauri around the regular chat app (`native/`). Releases attach a `.dmg`, an `.exe` installer, an `.msi` and an `.apk`.
+- Mac and Windows: CHATS keeps running in the menu bar or system tray when its window is closed, shows native notifications with the decrypted preview, and can start at login.
+- Android: a background check asks your own server for new messages once a minute and shows "N new messages", so notifications work without Google's push service, including on domestic-only internet.
+
+**API**
+- `GET notify/poll?since=<id>` returns the newest message id and how many messages arrived after `since` in your unmuted chats, without contents. It doesn't update "last seen".
+
 ## [2.6.1] - 2026-10-24
 
 **Domestic-only internet**

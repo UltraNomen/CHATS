@@ -1,0 +1,50 @@
+{
+  "$schema": "../../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "CHATS",
+  "version": "../../package.json",
+  "identifier": "io.github.ultranomen.chats",
+  "build": {
+    "frontendDist": "../../build/client",
+    "devUrl": "http://localhost:5173"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "CHATS",
+        "width": 1180,
+        "height": 780,
+        "minWidth": 360,
+        "minHeight": 560,
+        "backgroundColor": "#020402"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "SocialNetworking",
+    "shortDescription": "End-to-end encrypted chat you host yourself",
+    "longDescription": "CHATS is a minimal, open-source, end-to-end encrypted messenger for your own server. This app connects to any CHATS server.",
+    "copyright": "CHATS contributors · AGPL-3.0",
+    "license": "AGPL-3.0-only",
+    "homepage": "https://github.com/UltraNomen/CHATS",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "10.15"
+    },
+    "android": {
+      "minSdkVersion": 24
+    }
+  }
+}

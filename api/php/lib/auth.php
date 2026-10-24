@@ -33,8 +33,11 @@ final class Auth
         return ['token' => $token, 'id' => $id];
     }
 
-    /** Authenticates an app request. Throws the error codes the client turns into status screens. */
-    public static function app(DB $db, bool $allowPendingMfa = false): array
+    /**
+     * Authenticates an app request. Throws the error codes the client turns into status screens.
+     * $touch = false for background checks, which must not make the user look online.
+     */
+    public static function app(DB $db, bool $allowPendingMfa = false, bool $touch = true): array
     {
         $s = self::lookup($db, 'app', true);
         $u = $db->one('SELECT * FROM users WHERE id = ?', [$s['user_id']]);
@@ -49,7 +52,7 @@ final class Auth
             fail(503, 'maintenance', (string)Config::server('maintMsg'), ['since' => (int)$db->kvGet('maint_since', 0)]);
         }
         if (now() - (int)$s['last_seen'] > 30) $db->update('sessions', ['last_seen' => now(), 'ip' => client_ip()], 'id = ?', [$s['id']]);
-        if (now() - (int)$u['last_seen'] > 15) $db->update('users', ['last_seen' => now()], 'id = ?', [$u['id']]);
+        if ($touch && now() - (int)$u['last_seen'] > 15) $db->update('users', ['last_seen' => now()], 'id = ?', [$u['id']]);
         self::$user = $u;
         self::$session = $s;
         return $u;

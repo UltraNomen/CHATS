@@ -1,0 +1,16 @@
+[package]
+name = "tauri-plugin-chats-watch"
+version = "0.1.0"
+description = "CHATS on Android: checks the user's own server for new messages while the app is in the background"
+license = "AGPL-3.0-only"
+edition = "2021"
+rust-version = "1.77"
+links = "tauri-plugin-chats-watch"
+
+[dependencies]
+tauri = "2"
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+
+[build-dependencies]
+tauri-plugin = { version = "2", features = ["build"] }

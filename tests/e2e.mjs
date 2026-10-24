@@ -138,6 +138,14 @@ ok((await C.decryptFile(ef.key, got)).length === file.length, 'kiejo downloads a
 const outsider = await signup(new Api(BASE), 'mallory', 'mallorypass');
 await expectErr(outsider.api.download('file', { id: up.id }), 'no_file', 'non-member cannot fetch the file');
 
+// background check (Android app): only counts other people's new messages, never contents
+const np0 = await kie.api.get('notify/poll', { since: 0 });
+ok(np0.latest > 0 && np0.count === 0, 'notify/poll reports the latest message id');
+await ada.api.post('msg/send', { chat: dc.id, cid: 'np1', ct: await C.encJson(k, { t: 'text', text: 'ping' }, dc.id) });
+await kie.api.post('msg/send', { chat: dc.id, cid: 'np2', ct: await C.encJson(kk, { t: 'text', text: 'own message' }, dc.id) });
+const np1 = await kie.api.get('notify/poll', { since: np0.latest });
+ok(np1.count === 1 && np1.latest > np0.latest && !('messages' in np1), 'notify/poll counts only new messages from others');
+
 // ---- group with invite link
 const gk = C.newKey();
 const inv = await C.inviteSecrets(gk);
