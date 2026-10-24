@@ -1,5 +1,6 @@
 import { render } from 'preact';
 import '#shared/ui/global.css';
+import './fa.js';
 import { App } from './App.jsx';
 
 // The app behaves like a native one: no pinch, double-tap or focus zoom.

@@ -172,6 +172,8 @@ const GSFA = (function () {
     if (rec && cur === rec.fa) return;
     const fa = tr(cur);
     if (fa != null && fa !== cur) { TXT.set(n, { en: cur, fa }); n.nodeValue = fa; }
+    // Untranslated Latin text (sizes, paths, versions) keeps its own direction inside the right-to-left layout.
+    else if (/[A-Za-z]/.test(cur) && n.parentElement.childNodes.length === 1) n.parentElement.setAttribute('data-bidi', '');
   }
   function doAttr(el, a) {
     const cur = el.getAttribute(a); if (!cur) return;

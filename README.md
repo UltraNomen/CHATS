@@ -1,12 +1,59 @@
-# CHATS
+# CHATS: minimal self-hosted PHP chat with end-to-end encryption
 
-End-to-end encrypted chat you host yourself: an installable web app (PWA), an admin console, and a small PHP API that runs anywhere from shared hosting to Docker.
+[![Latest release](https://img.shields.io/github/v/release/UltraNomen/CHATS?label=release)](https://github.com/UltraNomen/CHATS/releases)
+[![CI](https://github.com/UltraNomen/CHATS/actions/workflows/ci.yml/badge.svg)](https://github.com/UltraNomen/CHATS/actions/workflows/ci.yml)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+[![Docker image](https://img.shields.io/badge/docker-ghcr.io%2Fultranomen%2Fchats-2496ED)](https://github.com/UltraNomen/CHATS/pkgs/container/chats)
 
-The server only ever stores ciphertext, wrapped keys and hashes. Passwords, messages, contacts, group names, files and the 8-word recovery phrase never reach it in readable form.
+**English** · [فارسی](README.fa.md)
 
-- **Chat app.** Direct and group chats, files and photos, replies, edits, forwarding, pinned messages, mentions, typing indicators, push notifications, offline mode, a Farsi interface, and an app lock.
-- **Admin console.** A first-run setup wizard, users and roles, reports, invite codes, announcements, storage, backups, an audit log, two-factor sign-in and an IP allow-list.
-- **API.** PHP 8.1+ with no dependencies. Works with SQLite, MySQL/MariaDB or PostgreSQL, and stores files on local disk or any S3-compatible service. You can switch databases and storage while it's running.
+**CHATS is a minimal, open-source PHP chat app with end-to-end encryption that you host yourself.** It's a private group chat for a team, a family or a community, as an alternative to Telegram, WhatsApp or Slack groups on someone else's servers. It runs on cheap **shared PHP hosting (cPanel)** or with one **Docker** command. People use it as an installable **web app (PWA)** on Android, iPhone and desktop, and you manage the server from a built-in **admin console**. The interface is available in **English and Farsi (Persian), with full right-to-left support**.
+
+The server only stores ciphertext. Messages, files, group names, contacts and passwords are encrypted on the device before they leave it.
+
+It's small on purpose: a lightweight PHP backend with no framework and no Composer packages, and two web apps that each build into a single HTML file. A simple chat server you can read, audit and run anywhere.
+
+![CHATS group chat in the browser: chat list, encrypted group conversation with replies, mentions and an image](docs/screenshots/chat-desktop.jpg)
+
+## Features
+
+### Private by design
+- **End-to-end encryption** for messages, files, photos and group names (X25519, AES-256-GCM).
+- **Passwords never leave the device.** Argon2id derives the keys, and the server only stores a hash.
+- **8-word recovery phrase** to get back into an account without anyone holding your keys.
+- **Two-factor sign-in** (TOTP, backup codes), an app lock with a PIN, and a list of signed-in devices.
+- **Server key fingerprints:** the app warns you if a server you know suddenly looks different.
+
+### A real messenger
+- Direct and group chats, replies, edits, forwarding, @mentions and pinned messages.
+- Photos and files of any type, with drag and drop and upload progress.
+- Typing indicators, read receipts, online status and "last seen", each with privacy settings.
+- Push notifications whose previews are encrypted too, plus offline mode and a share target.
+- Installs like a native app from the browser, with no app store needed.
+- English and Farsi interface with right-to-left layout and the Vazirmatn font.
+
+### Easy to host
+- **PHP 8.1+ with no dependencies:** it runs on almost any shared hosting plan, such as cPanel or Plesk.
+- **One-command Docker** image with automatic HTTPS (Caddy), and ready-made Docker Compose stacks.
+- **SQLite, MySQL/MariaDB or PostgreSQL**, and switching between them later copies the data over for you.
+- Files on local disk or any **S3-compatible** object storage.
+- A first-run **setup wizard** in the browser; no command line needed.
+
+### Admin console
+- Users and roles, invite codes, an approval queue, reports and moderation, and announcements.
+- Storage per user, backups, an audit log, server health, and maintenance mode.
+- Optional two-factor for admins and an IP allow-list.
+- Ships as **one HTML file**, so you can manage your server from anywhere, even a file on your laptop.
+
+## Screenshots
+
+| Phone | Farsi (right-to-left) |
+|---|---|
+| ![CHATS encrypted chat app on a phone, installed as a PWA](docs/screenshots/chat-phone.jpg) | ![CHATS chat app in Farsi (Persian) with right-to-left layout and the Vazirmatn font](docs/screenshots/chat-farsi.jpg) |
+
+| Admin console | Admin console in Farsi |
+|---|---|
+| ![CHATS admin console overview: users, messages, storage and open reports](docs/screenshots/admin-overview.jpg) | ![CHATS admin console in Farsi](docs/screenshots/admin-farsi.jpg) |
 
 ## Download
 
@@ -17,7 +64,7 @@ Every [release](https://github.com/UltraNomen/CHATS/releases) has these assets:
 | `chats-full-vX.zip` | chat app at `/`, console at `/admin/`, API at `/api/` | **most people.** Upload it to one web root and nobody has to type a server address |
 | `chats-update-vX.zip` | the same files without the root `.htaccess` | upgrading an install whose `.htaccess` has your own lines |
 | `chats-client-vX.zip` | the chat app alone | the app lives on a different host than the API |
-| `chats-admin-vX.html` | the console as **one HTML file** | managing a server from anywhere, even a file on your laptop |
+| `chats-admin-vX.html` | the console as **one HTML file** | managing a server from anywhere |
 | `chats-api-php-vX.zip` | the API alone, in an `api/` folder | API on its own host; the apps are hosted elsewhere |
 | `ghcr.io/ultranomen/chats:X` | Docker image: Caddy (automatic HTTPS) + PHP + the full bundle | servers and VPSes |
 
@@ -46,6 +93,37 @@ docker compose -f compose.postgres.yml up -d  # or compose.yml (SQLite), compose
 
 The setup wizard is pre-filled with the database and bucket from the environment. Their passwords stay on the server.
 
+## FAQ
+
+**Is CHATS really end-to-end encrypted?**
+Yes. Keys are created and kept on your devices. The server stores only encrypted messages, encrypted files, wrapped keys and password hashes, so an admin with full database access can't read conversations. [SECURITY.md](SECURITY.md) lists exactly what the server can and can't see.
+
+**Can I host it without Docker or a VPS?**
+Yes. CHATS needs only PHP 8.1+ and a database driver; SQLite works out of the box. Upload one zip to normal shared hosting. It's tested on a LiteSpeed cPanel host, in a subfolder.
+
+**Is there a mobile app?**
+CHATS is a Progressive Web App: open your server in Safari or Chrome and choose "Add to Home Screen". It then runs full-screen with its own icon, push notifications and offline start-up, with no app store involved.
+
+**Which databases does it support?**
+SQLite, MySQL/MariaDB and PostgreSQL. You can move a running server from one to another in the admin console.
+
+**Does it support Farsi / Persian and right-to-left languages?**
+Yes. Both the chat app and the admin console have a complete Farsi interface with right-to-left layout and the Vazirmatn font. Mixed English and Farsi text keeps the right direction.
+
+**Is it free?**
+Yes. It's open source under the AGPL-3.0: free to use, change and host. If you run a modified version for other people, you share your changes.
+
+## Looking for…
+
+CHATS fits if you searched for any of these:
+- a **PHP chat** app or **PHP chat script** for your own hosting
+- a **minimal chat** or **simple chat app** that is still secure
+- a **self-hosted messenger** or **private group chat** for a team or family
+- an **encrypted chat room** or **E2EE web chat** that runs in the browser
+- a **lightweight chat server** with SQLite, MySQL or PostgreSQL
+- an open-source **chat PWA** you can install on phones without an app store
+- a **Persian / Farsi chat** app with right-to-left support
+
 ## Repository
 
 ```
@@ -56,7 +134,7 @@ api/php/       the API (PHP 8.1+, no dependencies)
 tests/         API conformance + security suites (Node), client tests
 scripts/       build, release packaging, versioning
 deploy/        Dockerfile, Caddyfile, compose variants
-docs/          deployment, operations, testing
+docs/          deployment, operations, testing, screenshots
 ```
 
 ## Development
@@ -81,7 +159,7 @@ Tests are described in [docs/testing.md](docs/testing.md), and releases in [CONT
 
 ## Docs
 
-- [Deployment](docs/deploy.md): shared hosting, nginx, Docker and compose, split deployments, branded clients, updating
+- [Deployment](docs/deploy.md): shared hosting and cPanel, nginx, Docker and compose, split deployments, branded clients, updating
 - [Operations](docs/operations.md): backups, switching database or storage, push, two-factor, versions
 - [Testing](docs/testing.md)
 - [Security](SECURITY.md): reporting vulnerabilities, the encryption model, hardening

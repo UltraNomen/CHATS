@@ -48,3 +48,7 @@ button:disabled { cursor: not-allowed; }
 
 /* lets a green island sit inside an amber page (admin announcement preview) */
 [data-theme="green"]{--surface-input:rgba(46,232,102,.07);--surface-hover:rgba(46,232,102,.12);--surface-selected:var(--green-800);--accent:var(--green-300);--accent-strong:var(--green-200);--accent-dim:var(--green-600);--accent-ink:#011a06;--text-1:var(--green-200);--text-2:var(--green-400);--text-3:var(--green-600);--border-1:var(--green-700);--border-2:var(--green-500);--border-strong:var(--green-300);--border-faint:var(--green-800);--glow-rgb:77,255,124;}
+
+/* User content and untranslated Latin text (names, messages, sizes, paths) takes its direction from its own first
+   letter, so English reads left-to-right and Farsi right-to-left in either interface language. */
+[data-no-tr], [data-bidi], input, textarea { unicode-bidi: plaintext; text-align: -webkit-match-parent; text-align: match-parent; }

@@ -2,6 +2,17 @@
 
 One version covers the API, the chat app and the console. Releases are tagged `vX.Y.Z`.
 
+## [Unreleased]
+
+**Farsi and right-to-left**
+- English text inside the Farsi interface (messages, names, sizes, paths) keeps its own direction, so punctuation no longer jumps to the wrong end. Farsi text inside English stays right-to-left too.
+- More of the interface is translated: member counts, system lines in conversations, the composer, presence, the admin console's newer settings and labels.
+- The Vazirmatn font now loads again after a reload when it was chosen, and the admin console uses it whenever Farsi is on.
+
+**Docs**
+- Farsi README, deployment guide and Docker Compose guide.
+- README with screenshots, feature overview and FAQ.
+
 ## [2.6.0] - 2026-10-24
 
 First public release from this repository.

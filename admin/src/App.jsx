@@ -7,6 +7,7 @@ import { b64 } from '#shared/core/bytes.js';
 import { qrMatrix } from '#shared/core/qr.js';
 import { utcTime, fmtUptime } from '#shared/core/format.js';
 import GSFA from '#shared/core/i18n.js';
+import { loadVazir } from '#shared/ui/fonts.js';
 import { QrGrid } from '#shared/ui/kit.jsx';
 import { Pages, CONFIG_PAGES } from './pages.jsx';
 import { B } from './ui.jsx';
@@ -142,7 +143,11 @@ export class AdminApp extends Component {
 
   componentWillUnmount() { window.removeEventListener('resize', this.onResize); clearInterval(this.iv); clearInterval(this.pollT); }
 
-  componentDidUpdate() { const r = document.getElementById('admin-root'); if (r) GSFA.set(r, this.state.lang); }
+  componentDidUpdate() {
+    const r = document.getElementById('admin-root');
+    if (r) GSFA.set(r, this.state.lang);
+    if (this.state.lang === 'fa') loadVazir();
+  }
 
   async loadMe() {
     const r = await this.api.get('admin/me');

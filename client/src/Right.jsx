@@ -192,7 +192,7 @@ function Conversation({ a, chat }) {
   shown.forEach((m, i) => {
     const day = dayLabel(m.at);
     if (day !== lastDay) { lastDay = day; items.push(<div key={'d' + day + i} style={{ alignSelf: 'center', fontSize: '11px', color: 'var(--text-3)', padding: '4px 0 8px' }}>── {day} ──</div>); }
-    if (m.kind === 'sys') { items.push(<div key={m.id} data-no-tr="1" style={{ alignSelf: 'center', padding: '4px 10px', fontSize: '11px', color: 'var(--text-2)', border: '1px dashed var(--border-faint)', background: 'var(--surface-panel)' }}>{sysText(m, e)}</div>); return; }
+    if (m.kind === 'sys') { items.push(<div key={m.id} style={{ alignSelf: 'center', padding: '4px 10px', fontSize: '11px', color: 'var(--text-2)', border: '1px dashed var(--border-faint)', background: 'var(--surface-panel)' }}>{sysText(m, e)}</div>); return; }
     const prev = shown[i - 1];
     items.push(<Bubble key={m.id > 0 ? m.id : m.cid} a={a} m={m} chat={chat} showSender={d.isGroup && m.from !== me.id && (!prev || prev.from !== m.from || prev.kind === 'sys')} />);
   });
@@ -318,7 +318,7 @@ function Conversation({ a, chat }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '52px', boxSizing: 'border-box', padding: '0 10px' }}>
           {caps.attach !== false && <IconButton variant="ghost" label="attach" onClick={() => a.set({ attachOpen: !s.attachOpen })}><Icon name="plus" /></IconButton>}
           <Box h={36} border="var(--border-1)" style={{ flex: 1, minWidth: 0, boxSizing: 'border-box' }}>
-            <Inp value={s.draft} onInput={ev => { a.set({ draft: ev.target.value }); if (ev.target.value.trim() && s.editId === null) e.sendTyping(chat.id); }} data-no-tr="1" data-composer="1"
+            <Inp value={s.draft} onInput={ev => { a.set({ draft: ev.target.value }); if (ev.target.value.trim() && s.editId === null) e.sendTyping(chat.id); }} data-composer="1"
               onKeyDown={ev => {
                 if (ev.key === 'Enter' && !ev.isComposing) { ev.preventDefault(); if (mList.length) return pickMention(mList[0].username); a.send(); }
                 if (ev.key === 'Escape' && (s.editId !== null || s.replyId !== null)) { ev.stopPropagation(); a.set({ editId: null, replyId: null, draft: s.editId !== null ? '' : s.draft }); }

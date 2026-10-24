@@ -1,5 +1,7 @@
 # Docker Compose stacks
 
+**English** · [فارسی](README.fa.md)
+
 | file | what you get |
 |---|---|
 | `compose.yml` | CHATS with SQLite: the smallest setup |

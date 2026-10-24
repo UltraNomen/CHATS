@@ -1,5 +1,7 @@
 # Deploying CHATS
 
+**English** · [فارسی](deploy.fa.md)
+
 CHATS has three parts: the **chat app** (a PWA), the **admin console** and the **API**. They can live together in one web root, which is the usual setup, or on separate hosts.
 
 | setup | assets | who types a server address |

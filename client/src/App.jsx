@@ -13,6 +13,7 @@ import { Overlays } from './Overlays.jsx';
 import { isOn, chatList } from './view.js';
 import { RASTER } from '#shared/core/messages.js';
 import { LOCKED_SERVER } from '#shared/core/build.js';
+import { loadVazir } from '#shared/ui/fonts.js';
 import { apiBase, hostOf } from '#shared/core/api.js';
 
 export const FONTS = { jetbrains: ['jetbrains mono', '"JetBrains Mono"'], system: ['system', 'ui-monospace,"SFMono-Regular",Menlo,Consolas'], vt323: ['vt323', '"VT323"'], pixia: ['q pixia', '"Q Pixia"'], vazir: ['vazir', '"Vazirmatn"'] };
@@ -62,6 +63,8 @@ export class App extends Component {
     this.bootT = setInterval(() => this.setState(x => x.bootN >= 5 ? (clearInterval(this.bootT), { booting: false, pinMode: x.lock.enabled && !x.auth ? 'lock' : x.pinMode }) : { bootN: x.bootN + 1 }), 300);
     const ua = navigator.userAgent;
     this.setState({ installTab: /iphone|ipad|ipod/i.test(ua) ? 'ios' : /android/i.test(ua) ? 'android' : 'desktop' });
+    // A saved Vazir choice has to load its font again on every visit.
+    if (this.state.font === 'vazir' || this.state.faFont === 'vazir') loadVazir();
     this.readLinks();
     let where = await this.eng.boot();
     // A branded build only ever uses its own server, even if this origin once stored another one.
@@ -221,13 +224,7 @@ export class App extends Component {
 
   saveLook(patch) {
     this.setState(patch, () => { const s = this.state; LS.set('look', { theme: s.theme, font: s.font, faFont: s.faFont, lang: s.lang, scanlines: s.scanlines }); });
-    if ((patch.font === 'vazir' || patch.faFont === 'vazir') && !document.getElementById('vazir-css')) {
-      const l = document.createElement('link');
-      l.id = 'vazir-css';
-      l.rel = 'stylesheet';
-      l.href = 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap';
-      document.head.appendChild(l);
-    }
+    if (patch.font === 'vazir' || patch.faFont === 'vazir') loadVazir();
   }
 
   savePrefs(prefs) { LS.set('prefs', prefs); this.setState({ prefs }); }
