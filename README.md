@@ -137,7 +137,7 @@ api/php/       the API (PHP 8.1+, no dependencies)
 tests/         API conformance + security suites (Node), client tests
 scripts/       build, release packaging, versioning
 deploy/        Dockerfile, Caddyfile, compose variants
-docs/          deployment, operations, testing, screenshots
+docs/          architecture, deployment, operations, testing, screenshots
 ```
 
 ## Development
@@ -162,6 +162,7 @@ Tests are described in [docs/testing.md](docs/testing.md), and releases in [CONT
 
 ## Docs
 
+- [Architecture](docs/architecture.md): diagrams of the parts, the encryption keys, sign-in, message sync, the data model and deployment layouts
 - [Deployment](docs/deploy.md): shared hosting and cPanel, nginx, Docker and compose, split deployments, branded clients, domestic-only internet, updating
 - [Operations](docs/operations.md): backups, switching database or storage, push, two-factor, versions
 - [Testing](docs/testing.md)

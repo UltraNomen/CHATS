@@ -127,6 +127,7 @@ CHATS به کارتان می‌آید اگر دنبال یکی از این‌ه�
 
 - [راهنمای نصب](docs/deploy.fa.md): هاست اشتراکی و cPanel، ‏Docker و Compose، نصب جداگانه، اینترنت داخلی، به‌روزرسانی
 - [پیکربندی‌های Docker Compose](deploy/compose/README.fa.md)
+- [معماری پروژه](docs/architecture.md): نمودار بخش‌ها، کلیدهای رمزنگاری، ورود، همگام‌سازی پیام‌ها، مدل داده و روش‌های نصب (انگلیسی)
 - [امنیت](SECURITY.md)، [عملیات سرور](docs/operations.md) و [آزمون‌ها](docs/testing.md) (انگلیسی)
 - [تغییرات نسخه‌ها](CHANGELOG.md) (انگلیسی)
 
