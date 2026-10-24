@@ -80,6 +80,7 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
       - uses: android-actions/setup-android@v3
+        with: { packages: 'platform-tools' }   # the default also asks for 'tools', which Google no longer publishes
       - name: android ndk
         run: |
           sdkmanager --install "ndk;27.2.12479018" > /dev/null
