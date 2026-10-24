@@ -17,6 +17,7 @@
     "test:client": "node tests/client-security.mjs",
     "test:api": "node tests/e2e.mjs",
     "test:security": "node tests/security.mjs",
+    "tauri": "cd native && tauri",
     "native:build": "npm run build && cd native && tauri build",
     "native:dev": "cd native && tauri dev",
     "native:android": "npm run build && cd native && tauri android build --apk"
