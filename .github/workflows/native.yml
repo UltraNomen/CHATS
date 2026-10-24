@@ -110,7 +110,7 @@ jobs:
           if [ -n "$KEYSTORE" ]; then
             echo "$KEYSTORE" | base64 -d > release.keystore
             "$bt/zipalign" -f -p 4 "$apk" aligned.apk
-            "$bt/apksigner" sign --ks release.keystore --ks-pass env:KS_PASS --ks-key-alias "$KEY_ALIAS" --out "out/chats-android-$v.apk" aligned.apk
+            "$bt/apksigner" sign --ks release.keystore --ks-pass env:KS_PASS --ks-key-alias "$KEY_ALIAS" --v4-signing-enabled false --out "out/chats-android-$v.apk" aligned.apk
             "$bt/apksigner" verify --print-certs "out/chats-android-$v.apk" | head -3
             rm -f release.keystore
             echo "signed=true" >> "$GITHUB_OUTPUT"
