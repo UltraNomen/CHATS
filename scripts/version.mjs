@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const pkgFile = join(root, 'package.json'), phpFile = join(root, 'api', 'php', 'lib', 'config.php');
+const pkgFile = join(root, 'package.json'), lockFile = join(root, 'package-lock.json'), phpFile = join(root, 'api', 'php', 'lib', 'config.php');
 const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'));
 const php = readFileSync(phpFile, 'utf8');
 const phpVer = (/const CHATS_VERSION = 'v([^']+)';/.exec(php) || [])[1];
@@ -19,6 +19,10 @@ if (arg === '--check') {
 } else if (/^\d+\.\d+\.\d+(-[\w.]+)?$/.test(arg || '')) {
   pkg.version = arg;
   writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + '\n');
+  const lock = JSON.parse(readFileSync(lockFile, 'utf8'));
+  lock.version = arg;
+  if (lock.packages && lock.packages['']) lock.packages[''].version = arg;
+  writeFileSync(lockFile, JSON.stringify(lock, null, 2) + '\n');
   writeFileSync(phpFile, php.replace(/const CHATS_VERSION = 'v[^']+';/, `const CHATS_VERSION = 'v${arg}';`));
   console.log(`version set to ${arg} · add a CHANGELOG.md entry, commit, then tag v${arg}`);
 } else {
