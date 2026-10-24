@@ -2,7 +2,7 @@
 
 One version covers the API, the chat app and the console. Releases are tagged `vX.Y.Z`.
 
-## [Unreleased]
+## [2.7.0] - 2026-10-25
 
 **Native apps**
 - CHATS for **Mac, Windows and Android**, built with Tauri around the regular chat app (`native/`). Releases attach a `.dmg`, an `.exe` installer, an `.msi` and an `.apk`.
