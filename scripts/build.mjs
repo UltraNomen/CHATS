@@ -33,8 +33,8 @@ for (const file of [out('client', 'index.html'), out('admin', 'index.html')]) {
   const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m => m[1]);
   if (!scripts.length || /\son[a-z]+=["']/i.test(html.replace(/<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>/g, ''))) fail('unexpected inline code in ' + file);
   const hashes = scripts.map(s => `'sha256-${createHash('sha256').update(s, 'utf8').digest('base64')}'`).join(' ');
-  const csp = [`default-src 'none'`, `script-src ${hashes} 'wasm-unsafe-eval'`, `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
-    `font-src 'self' data: https://fonts.gstatic.com`, `img-src 'self' data: blob:`, `media-src 'self' blob:`, `connect-src *`, `worker-src 'self'`,
+  const csp = [`default-src 'none'`, `script-src ${hashes} 'wasm-unsafe-eval'`, `style-src 'self' 'unsafe-inline'`,
+    `font-src 'self' data:`, `img-src 'self' data: blob:`, `media-src 'self' blob:`, `connect-src *`, `worker-src 'self'`,
     `manifest-src 'self'`, `frame-src 'none'`, `object-src 'none'`, `base-uri 'none'`, `form-action 'none'`].join('; ');
   html = html.replace(/<meta charset="utf-8">/i, m => `${m}\n  <meta http-equiv="Content-Security-Policy" content="${csp}">`);
   if (!html.includes('Content-Security-Policy')) fail('no <meta charset> in ' + file);

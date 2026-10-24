@@ -110,6 +110,9 @@ SQLite, MySQL/MariaDB and PostgreSQL. You can move a running server from one to 
 **Does it support Farsi / Persian and right-to-left languages?**
 Yes. Both the chat app and the admin console have a complete Farsi interface with right-to-left layout and the Vazirmatn font. Mixed English and Farsi text keeps the right direction.
 
+**Does it work when only a national / domestic internet is available?**
+Yes, if the server is hosted inside that network: chats, groups, files, encryption and the Farsi interface keep working. Push notifications need Google or Apple's servers, so they pause until international access returns; messages still arrive while the app is open. See [docs/deploy.md](docs/deploy.md#when-only-the-domestic-internet-works) for how to prepare.
+
 **Is it free?**
 Yes. It's open source under the AGPL-3.0: free to use, change and host. If you run a modified version for other people, you share your changes.
 
@@ -159,7 +162,7 @@ Tests are described in [docs/testing.md](docs/testing.md), and releases in [CONT
 
 ## Docs
 
-- [Deployment](docs/deploy.md): shared hosting and cPanel, nginx, Docker and compose, split deployments, branded clients, updating
+- [Deployment](docs/deploy.md): shared hosting and cPanel, nginx, Docker and compose, split deployments, branded clients, domestic-only internet, updating
 - [Operations](docs/operations.md): backups, switching database or storage, push, two-factor, versions
 - [Testing](docs/testing.md)
 - [Security](SECURITY.md): reporting vulnerabilities, the encryption model, hardening
@@ -168,3 +171,5 @@ Tests are described in [docs/testing.md](docs/testing.md), and releases in [CONT
 ## License
 
 [AGPL-3.0](LICENSE). You can use, change and host CHATS freely. If you run a modified version for other people, you must offer them its source code.
+
+The bundled Vazirmatn font is © The Vazirmatn Project Authors, under the [SIL Open Font License 1.1](client/public/fonts/Vazirmatn-OFL.txt).

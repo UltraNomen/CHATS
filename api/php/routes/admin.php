@@ -581,7 +581,9 @@ function r_admin_health(): never
     $services = [
         ['api', 'UP', 'php ' . PHP_VERSION . ' · ' . $syncs . ' syncs this hour'],
         ['sync', 'UP', (int)$db->value('SELECT COUNT(*) FROM users WHERE last_seen > ?', [now() - 60]) . ' clients polling'],
-        ['push gateway', $pushFails > 5 ? 'DEGRADED' : 'UP', 'web push · ' . $pushFails . ' failures / 1h · ' . (int)$db->value('SELECT COUNT(*) FROM push_subs') . ' devices'],
+        ($pauseUntil = (int)$db->kvGet('push_pause_until', 0)) > now()
+            ? ['push gateway', 'DEGRADED', 'no push service reachable · paused until ' . gmdate('H:i', $pauseUntil) . ' UTC · messages are unaffected']
+            : ['push gateway', $pushFails > 5 ? 'DEGRADED' : 'UP', 'web push · ' . $pushFails . ' failures / 1h · ' . (int)$db->value('SELECT COUNT(*) FROM push_subs') . ' devices'],
         ['database', 'UP', $db->version() . ' · ' . fmt_bytes($db->sizeBytes())],
         ['blob storage', 'UP', ($st['backend'] === 's3' ? 's3 · ' . $st['bucket'] : 'local') . ' · ' . fmt_bytes((int)$db->value('SELECT COALESCE(SUM(size), 0) FROM blobs')) . ' · ' . (int)$db->value('SELECT COUNT(*) FROM blobs') . ' objects'],
         ['smtp', $smtp['on'] ? 'UP' : 'OFF', $smtp['on'] ? $smtp['host'] . ':' . $smtp['port'] : 'not configured'],

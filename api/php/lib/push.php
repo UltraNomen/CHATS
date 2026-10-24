@@ -139,16 +139,19 @@ final class Push
             'Content-Encoding: aes128gcm', 'Content-Type: application/octet-stream', 'TTL: ' . $ttl, 'Urgency: high',
             'Content-Length: ' . strlen($body),
         ];
-        try { return http_request('POST', $sub['endpoint'], $headers, $body, 10, $pin)[0]; } catch (Throwable) { return 0; }
+        try { return http_request('POST', $sub['endpoint'], $headers, $body, 6, $pin)[0]; } catch (Throwable) { return 0; }
     }
 
     /** Fan out to every subscription of the given users; prunes dead endpoints. */
     public static function toUsers(DB $db, array $userIds, array $payload): void
     {
-        if (!$userIds) return;
+        if (!$userIds || (int)$db->kvGet('push_pause_until', 0) > now()) return;
         $subs = $db->all('SELECT * FROM push_subs WHERE user_id IN (' . $db->in($userIds) . ')', $userIds);
+        $tried = $down = 0;
         foreach ($subs as $s) {
             try { $st = self::send($s, $payload); } catch (Throwable) { $st = 0; }
+            $tried++;
+            if ($st === 0) $down++;
             if ($st === 404 || $st === 410) {
                 $db->exec('DELETE FROM push_subs WHERE id = ?', [$s['id']]);
             } elseif ($st < 200 || $st >= 300) {
@@ -159,5 +162,15 @@ final class Push
                 $db->exec('UPDATE push_subs SET fails = 0 WHERE id = ?', [$s['id']]);
             }
         }
+        if (!$tried) return;
+        // When no push service answers (typically because only the domestic internet works), every send would wait for
+        // connection timeouts. After two such rounds in a row, stop trying for 10 minutes; messages themselves are unaffected.
+        $streak = $down === $tried ? (int)$db->kvGet('push_down_streak', 0) + 1 : 0;
+        if ($streak >= 2) {
+            $db->kvSet('push_pause_until', now() + 600);
+            $db->log('WARN', 'push: no push service reachable · paused for 10 minutes');
+            $streak = 0;
+        }
+        $db->kvSet('push_down_streak', $streak);
     }
 }

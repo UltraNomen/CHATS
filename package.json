@@ -1,7 +1,7 @@
 {
   "name": "chats",
   "private": true,
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "End-to-end encrypted chat you host yourself: PWA client, admin console and PHP API",
   "license": "AGPL-3.0-only",
   "type": "module",

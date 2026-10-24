@@ -1,10 +1,15 @@
-// Vazirmatn (the Farsi typeface) isn't bundled; it's loaded from Google Fonts only when someone uses it.
-// The pages' CSP allows fonts.googleapis.com / fonts.gstatic.com for exactly this.
-export function loadVazir() {
+// Vazirmatn, the Farsi typeface (SIL OFL 1.1, see client/public/fonts/Vazirmatn-OFL.txt), ships with CHATS, so Farsi
+// renders properly even when only the domestic internet works. Two families from the same file:
+//   "Vazirmatn"        the whole font, for people who pick it as the main typeface
+//   "Vazirmatn Arabic" limited to Arabic-script characters, appended to the other font stacks; browsers only fetch it
+//                      once Farsi text appears, so English-only users never download it
+const ARABIC = 'U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F';
+
+export function loadVazir(src) {
   if (document.getElementById('vazir-css')) return;
-  const l = document.createElement('link');
-  l.id = 'vazir-css';
-  l.rel = 'stylesheet';
-  l.href = 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap';
-  document.head.appendChild(l);
+  const face = (family, range) => `@font-face { font-family: "${family}"; src: url("${src}") format("truetype"); font-weight: 100 900; font-display: swap;${range ? ' unicode-range: ' + range + ';' : ''} }`;
+  const st = document.createElement('style');
+  st.id = 'vazir-css';
+  st.textContent = face('Vazirmatn') + '\n' + face('Vazirmatn Arabic', ARABIC);
+  document.head.appendChild(st);
 }

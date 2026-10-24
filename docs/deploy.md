@@ -123,6 +123,24 @@ CHATS_SERVER=chat.example.org npm run build   # dist/client (and dist/full) are 
 
 The full bundle doesn't need this, since it always finds its own server. Use branded clients when the app is hosted apart from the API, or when you publish it under its own name.
 
+## When only the domestic internet works
+
+CHATS keeps working inside a national network (for example when Iran is cut off from the international internet), as long as the **server is hosted inside that network** and people can still reach it.
+
+**Prepare before a shutdown:**
+- Host CHATS with a provider or data center inside the country, and use **local storage** or an S3 service inside the country for files.
+- Check that your domain still resolves without international access, for example by using your host's own name servers.
+- **HTTPS certificates** (Let's Encrypt, including Caddy's automatic ones) can only be renewed with international access, and they last up to 90 days. Renew shortly before an expected shutdown, so a valid certificate covers as much of it as possible.
+- Download the release, set up the server, and have everyone install the app (add to home screen) and sign in. Share invite codes in advance.
+- Keep a copy of `chats-admin-vX.html` and the release zips offline; GitHub may be unreachable later.
+
+**Keeps working:** messages, groups, files and photos, encryption, the Farsi interface and its font (bundled), the admin console, backups, and two-factor with an authenticator app or backup codes (they work offline).
+
+**Doesn't work without international access:**
+- **Push notifications.** They go through Google, Apple, Mozilla or Microsoft. New messages still arrive while the app is open, and **Settings → Notifications** says why notifications are unavailable. The server notices that push services are unreachable, pauses sending for 10 minutes at a time so messages stay fast, and shows this under *health*.
+- **Emailed sign-in codes,** if your SMTP server is abroad. Use an SMTP server inside the country, or authenticator codes.
+- **Update checks** against GitHub.
+
 ## Updating
 
 - **Shared hosting:** extract `chats-update-vX.zip` over the old files. It is the full bundle without the root `.htaccess`, so local lines such as the PHP handler stay. `api/config.local.php` is never part of a release, so it is kept too.

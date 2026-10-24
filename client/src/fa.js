@@ -8,6 +8,11 @@ GSFA.add({
   '· change': '· تغییر', '· usernames are permanent': '· نام کاربری قابل تغییر نیست', 'browser · unknown': 'مرورگر · ناشناخته',
   '// add people first: search an @username on the chats tab.': '// اول افراد را اضافه کنید: در زبانه گفتگوها یک ‎@نام‌کاربری جستجو کنید.',
   'message — @ to mention_': 'پیام — با @ نام ببرید_', 'message_': 'پیام_', 'edit message_': 'ویرایش پیام_', 'add a caption_': 'افزودن توضیح_',
+  "this browser can't receive push notifications · on iPhone and iPad, add CHATS to the home screen first": 'این مرورگر اعلان فوری دریافت نمی‌کند · در آیفون و آیپد اول CHATS را به صفحه‌ی اصلی اضافه کنید',
+  'notifications are blocked for this site · allow them in your browser settings, then turn this on again': 'اعلان‌ها برای این سایت مسدود است · در تنظیمات مرورگر اجازه دهید و دوباره روشنش کنید',
+  "notifications aren't available right now: this browser can't reach its push service, which happens when only the domestic internet works · new messages still arrive while CHATS is open": 'اعلان‌ها فعلاً در دسترس نیستند: این مرورگر به سرویس اعلان خود دسترسی ندارد، که وقتی فقط اینترنت داخلی وصل است پیش می‌آید · پیام‌های تازه تا وقتی CHATS باز است می‌رسند',
+  "couldn't reach the server · CHATS tries again the next time it starts": 'به سرور دسترسی نیست · CHATS دفعه‌ی بعد که باز شود دوباره امتحان می‌کند',
+  "the server couldn't set up notifications for this browser · new messages still arrive while CHATS is open": 'سرور نتوانست اعلان را برای این مرورگر راه بیندازد · پیام‌های تازه تا وقتی CHATS باز است می‌رسند',
   '// others find you as': '// دیگران شما را این‌طور پیدا می‌کنند:', '// visible to:': '// قابل مشاهده برای:',
 }, [
   // system lines in a conversation (they contain names, so they're matched as patterns)

@@ -47,7 +47,7 @@ export class App extends Component {
       groupName: '', groupSel: {}, groupQuery: '', groupErr: '', contactQuery: '', saved: false, profErr: '', setSec: null, devices: null, devConfirm: null,
       lock: LS.get('lock', LOCK0), pinMode: null, pin: '', pinFirst: '', pinErr: '', pinDigits: 4, pinTries: 0,
       prefs: LS.get('prefs', { notify: false, sound: false }), serverCard: false, upd: null, mfa: null, now: Date.now(),
-      theme: look.theme || null, font: look.font || 'jetbrains', faFont: look.faFont || 'system', lang: look.lang || 'en', scanlines: look.scanlines ?? true,
+      theme: look.theme || null, font: look.font || 'jetbrains', faFont: look.faFont || 'vazir', lang: look.lang || 'en', scanlines: look.scanlines ?? true,
       pf: null, hidePreviews: false, dragOver: false, keysOpen: false, pinIdx: null,
     };
     this.lastAct = Date.now();
@@ -63,8 +63,8 @@ export class App extends Component {
     this.bootT = setInterval(() => this.setState(x => x.bootN >= 5 ? (clearInterval(this.bootT), { booting: false, pinMode: x.lock.enabled && !x.auth ? 'lock' : x.pinMode }) : { bootN: x.bootN + 1 }), 300);
     const ua = navigator.userAgent;
     this.setState({ installTab: /iphone|ipad|ipod/i.test(ua) ? 'ios' : /android/i.test(ua) ? 'android' : 'desktop' });
-    // A saved Vazir choice has to load its font again on every visit.
-    if (this.state.font === 'vazir' || this.state.faFont === 'vazir') loadVazir();
+    // Declares the bundled Farsi font; nothing is downloaded until Farsi text is on screen.
+    loadVazir('fonts/vazirmatn.ttf');
     this.readLinks();
     let where = await this.eng.boot();
     // A branded build only ever uses its own server, even if this origin once stored another one.
@@ -224,7 +224,6 @@ export class App extends Component {
 
   saveLook(patch) {
     this.setState(patch, () => { const s = this.state; LS.set('look', { theme: s.theme, font: s.font, faFont: s.faFont, lang: s.lang, scanlines: s.scanlines }); });
-    if (patch.font === 'vazir' || patch.faFont === 'vazir') loadVazir();
   }
 
   savePrefs(prefs) { LS.set('prefs', prefs); this.setState({ prefs }); }
@@ -424,7 +423,7 @@ export class App extends Component {
   render() {
     const s = this.state, e = this.eng, es = e.s, wide = this.wide();
     const theme = s.theme || (es.config && es.config.theme) || (es.server && es.server.info.theme) || 'green';
-    const fa = s.faFont === 'pixia' ? '"Q Pixia Arabic",' : s.faFont === 'vazir' ? '"Vazirmatn",' : '';
+    const fa = s.faFont === 'pixia' ? '"Q Pixia Arabic",' : s.faFont === 'vazir' ? '"Vazirmatn Arabic",' : '';
     const fontMono = FONTS[s.font][1] + ',' + fa + 'ui-monospace,Menlo,Consolas,"Noto Sans Arabic",Tahoma,monospace';
     const fontPixel = '"Silkscreen",' + fa + '"VT323",' + fontMono;
     const dir = s.lang === 'fa' ? 'rtl' : 'ltr';

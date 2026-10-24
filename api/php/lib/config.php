@@ -2,7 +2,7 @@
 // Server configuration: one JSON file in the data directory, written by the setup wizard and the admin console.
 declare(strict_types=1);
 
-const CHATS_VERSION = 'v2.6.0';
+const CHATS_VERSION = 'v2.6.1';
 /** Wire protocol: bump only for breaking API changes. Clients refuse servers with a protocol they don't speak. */
 const CHATS_PROTOCOL = 1;
 

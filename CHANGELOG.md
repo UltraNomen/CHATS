@@ -2,7 +2,13 @@
 
 One version covers the API, the chat app and the console. Releases are tagged `vX.Y.Z`.
 
-## [Unreleased]
+## [2.6.1] - 2026-10-24
+
+**Domestic-only internet**
+- Vazirmatn, the Farsi font, now ships with CHATS (SIL OFL 1.1) and is the default Farsi typeface. The chat app downloads it from your own server only when Farsi text appears, and the console embeds it. Nothing loads from Google Fonts any more, and both apps' Content-Security-Policy no longer allows Google.
+- When push notifications can't work (most often because the browser can't reach Google's or Apple's push service on domestic-only internet), **Settings → Notifications** says why. New messages still arrive while the app is open.
+- When no push service answers for two rounds in a row, the server pauses push for 10 minutes instead of making every send wait for timeouts, and shows this under *health*. The push connection timeout is shorter too.
+- New guide: "When only the domestic internet works" in `docs/deploy.md` and `docs/deploy.fa.md`.
 
 **Farsi and right-to-left**
 - English text inside the Farsi interface (messages, names, sizes, paths) keeps its own direction, so punctuation no longer jumps to the wrong end. Farsi text inside English stays right-to-left too.

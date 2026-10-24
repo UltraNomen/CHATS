@@ -63,6 +63,22 @@ foreach ([['auth_hash' => hash('sha256', 'b')], ['totp_secret' => 'JBSWY3DPEHPK3
 check(!trust_ok(['id' => 'u_other'] + $u, $trust), 'trust token crossed accounts');
 echo "PASS trust tokens are bound to the account and its current credentials\n";
 
+// No push service reachable (e.g. domestic-only internet): after two failed rounds, sending pauses instead of slowing every message.
+putenv('CHATS_PUSH_HOSTS=push.invalid');
+$k = openssl_pkey_new(['curve_name' => 'prime256v1', 'private_key_type' => OPENSSL_KEYTYPE_EC]);
+$ec = openssl_pkey_get_details($k)['ec'];
+$p256 = "\x04" . str_pad($ec['x'], 32, "\0", STR_PAD_LEFT) . str_pad($ec['y'], 32, "\0", STR_PAD_LEFT);
+$db->insert('push_subs', ['session_id' => 's_unit', 'user_id' => $uid, 'endpoint' => 'https://push.invalid/sub', 'p256dh' => b64url($p256), 'auth' => b64url(random_bytes(16)), 'created_at' => now(), 'fails' => 0]);
+$fails = fn() => (int)$db->value('SELECT fails FROM push_subs WHERE user_id = ?', [$uid]);
+Push::toUsers($db, [$uid], ['v' => 1]);
+check($fails() === 1 && (int)$db->kvGet('push_pause_until', 0) === 0, 'push paused after a single unreachable round');
+Push::toUsers($db, [$uid], ['v' => 1]);
+check($fails() === 2 && (int)$db->kvGet('push_pause_until', 0) > now(), 'push not paused after two unreachable rounds');
+Push::toUsers($db, [$uid], ['v' => 1]);
+check($fails() === 2, 'paused push still tried to send');
+$db->exec('DELETE FROM push_subs WHERE user_id = ?', [$uid]);
+echo "PASS push pauses itself when no push service is reachable\n";
+
 // Even old direct chats with matching invitation hashes cannot be joined.
 $finished = false;
 register_shutdown_function(function () use (&$finished) { if (!$finished) { fwrite(STDERR, "FAIL direct join escaped its type guard\n"); exit(1); } });

@@ -8,6 +8,8 @@ import { qrMatrix } from '#shared/core/qr.js';
 import { utcTime, fmtUptime } from '#shared/core/format.js';
 import GSFA from '#shared/core/i18n.js';
 import { loadVazir } from '#shared/ui/fonts.js';
+// Embedded as data: so the console stays one self-contained file.
+import vazirFont from '../../client/public/fonts/vazirmatn.ttf';
 import { QrGrid } from '#shared/ui/kit.jsx';
 import { Pages, CONFIG_PAGES } from './pages.jsx';
 import { B } from './ui.jsx';
@@ -146,7 +148,7 @@ export class AdminApp extends Component {
   componentDidUpdate() {
     const r = document.getElementById('admin-root');
     if (r) GSFA.set(r, this.state.lang);
-    if (this.state.lang === 'fa') loadVazir();
+    if (this.state.lang === 'fa') loadVazir(vazirFont);
   }
 
   async loadMe() {
@@ -329,7 +331,7 @@ export class AdminApp extends Component {
     const srvVer = info.version ? 'v' + info.version.replace(/^chats-server /, '') : '';
     const ov = s.d.ov || {};
     return (
-      <div id="admin-root" data-theme="amber" dir={dir} lang={s.lang} style={{ '--font-mono': "'JetBrains Mono','Vazirmatn',ui-monospace,Menlo,monospace", '--font-pixel': "'Silkscreen','Vazirmatn','VT323',monospace", position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', background: 'var(--surface-page)', color: 'var(--text-1)', fontFamily: 'var(--font-mono)', fontSize: '13px', lineHeight: 1.45, overflow: 'hidden' }}>
+      <div id="admin-root" data-theme="amber" dir={dir} lang={s.lang} style={{ '--font-mono': "'JetBrains Mono','Vazirmatn Arabic',ui-monospace,Menlo,monospace", '--font-pixel': "'Silkscreen','Vazirmatn Arabic','VT323',monospace", position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column', background: 'var(--surface-page)', color: 'var(--text-1)', fontFamily: 'var(--font-mono)', fontSize: '13px', lineHeight: 1.45, overflow: 'hidden' }}>
         {s.auth === 'boot' && <div style={{ flex: 1, display: 'grid', placeItems: 'center', color: 'var(--text-3)', fontSize: '12px' }}>░░░ connecting to the server api…</div>}
         {s.auth === 'server' && <ServerStep a={this} />}
         {(s.auth === 'login' || s.auth === 'code') && <Login a={this} />}

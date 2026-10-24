@@ -13,6 +13,15 @@ export function tabsFor(a) {
   return <Tabs tabs={[['chats', 'list', 'message', unread], ['contacts', 'contacts', 'user', 0], ['settings', 'settings', 'sliders', 0]]} cur={a.state.left} onGo={a.goLeft} />;
 }
 
+/** Why push notifications can't be turned on, shown only in Settings → Notifications. */
+const PUSH_WHY = {
+  unsupported: "this browser can't receive push notifications · on iPhone and iPad, add CHATS to the home screen first",
+  blocked: 'notifications are blocked for this site · allow them in your browser settings, then turn this on again',
+  unreachable: "notifications aren't available right now: this browser can't reach its push service, which happens when only the domestic internet works · new messages still arrive while CHATS is open",
+  offline: "couldn't reach the server · CHATS tries again the next time it starts",
+  server: "the server couldn't set up notifications for this browser · new messages still arrive while CHATS is open",
+};
+
 export function LeftPane({ a }) {
   const l = a.state.left;
   if (l === 'newGroup') return <NewGroup a={a} />;
@@ -230,10 +239,17 @@ function Settings({ a }) {
         {sec === 'notifications' && <>
           <ToggleRow label="notifications" hint="push for new messages">
             <Switch checked={s.prefs.notify} onChange={async v => {
-              if (v) { const ok = await e.subscribePush().catch(() => false); if (!ok) return a.toast('!', 'notifications blocked', 'allow them in your browser settings'); } else e.unsubscribePush().catch(() => {});
+              if (v) {
+                const why = await e.subscribePush().catch(() => 'unreachable');
+                // Blocked or unsupported won't fix itself; for the rest the switch stays on and the app retries on its next start.
+                if (why === 'blocked' || why === 'unsupported') return;
+              } else { e.unsubscribePush().catch(() => {}); e.set({ pushProblem: '' }); }
               a.savePrefs({ ...s.prefs, notify: v });
             }} />
           </ToggleRow>
+          {e.s.pushProblem && <div data-screen-label="Push unavailable" style={{ margin: '0 16px 8px', padding: '10px 12px', border: '1px dashed var(--warn)', fontSize: '12px', lineHeight: 1.6, color: 'var(--text-2)' }}>
+            <span style={{ color: 'var(--warn)' }}>! </span>{PUSH_WHY[e.s.pushProblem] || PUSH_WHY.server}
+          </div>}
           <ToggleRow label="sounds" hint="beep on receive"><Switch checked={s.prefs.sound} onChange={v => a.savePrefs({ ...s.prefs, sound: v })} /></ToggleRow>
           <ToggleRow label="read receipts" hint="send ✓✓ when read"><Switch checked={!!me.receipts} onChange={v => priv('receipts', v)} /></ToggleRow>
         </>}

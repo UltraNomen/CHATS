@@ -799,16 +799,30 @@ export class Engine {
 
   // ---------------------------------------------------------------- push
 
+  /**
+   * Turns on web push. Resolves to '' when it worked, otherwise to why it can't work right now ('unsupported',
+   * 'blocked', 'unreachable', 'offline', 'server'). The reason is kept in `pushProblem` for Settings → Notifications.
+   */
   async subscribePush() {
+    const why = await this.trySubscribePush();
+    this.set({ pushProblem: why });
+    return why;
+  }
+
+  async trySubscribePush() {
     const vapid = this.s.server && this.s.server.info.vapid;
-    if (!vapid || !('serviceWorker' in navigator) || !('PushManager' in window)) return false;
-    const reg = await navigator.serviceWorker.ready;
-    if ((await Notification.requestPermission()) !== 'granted') return false;
-    const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: unb64(vapid) });
+    if (!vapid || !('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return 'unsupported';
+    const reg = await Promise.race([navigator.serviceWorker.ready, new Promise(r => setTimeout(() => r(null), 8000))]);
+    if (!reg) return 'unsupported';
+    if ((await Notification.requestPermission()) !== 'granted') return 'blocked';
+    let sub;
+    // The browser registers with its own push service (Google, Apple, Mozilla, Microsoft); that fails when only the
+    // domestic internet works.
+    try { sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: unb64(vapid) }); } catch { return 'unreachable'; }
     const j = sub.toJSON();
-    await this.api.post('push/subscribe', { endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth });
+    try { await this.api.post('push/subscribe', { endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth }); } catch (e) { return e.code === 'offline' ? 'offline' : 'server'; }
     await this.saveCache();
-    return true;
+    return '';
   }
 
   async unsubscribePush() {
